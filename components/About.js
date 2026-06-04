@@ -22,13 +22,13 @@ export default function About() {
             <div className="flex aspect-[4/5] w-full flex-col items-center justify-center rounded-[1.9rem] bg-brand-600/95 text-center text-white">
               <span className="font-serif text-6xl">N</span>
               <p className="mt-4 font-serif text-2xl font-semibold">
-                Your Name
+                Mayuri Singh
               </p>
               <p className="mt-1 text-sm text-white/80">
                 Nutritionist & Dietician
               </p>
               <p className="mt-6 max-w-[14rem] text-xs text-white/60">
-                Replace with your photo at /public/about.jpg
+                Profile Photo
               </p>
             </div>
           </div>
