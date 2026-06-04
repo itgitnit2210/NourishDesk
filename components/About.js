@@ -35,7 +35,7 @@ export default function About() {
           {/* Accent badge */}
           <div className="absolute -bottom-5 right-6 rounded-2xl bg-white px-5 py-3 shadow-soft ring-1 ring-brand-100">
             <p className="font-serif text-lg font-semibold text-brand-700">
-              8+ years
+              4+ years
             </p>
             <p className="text-xs text-ink/50">helping people eat better</p>
           </div>
