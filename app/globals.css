@@ -46,4 +46,26 @@ body {
   .heading-serif {
     @apply font-serif font-semibold tracking-tight text-ink;
   }
+
+  .input {
+    @apply w-full rounded-xl border border-brand-100 bg-cream px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-brand-300 focus:bg-white;
+  }
+}
+
+/* Blog editor + article styling */
+.prose pre {
+  background: #233729;
+  color: #e4efe5;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+}
+.prose code { font-size: 0.9em; }
+
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: rgba(44, 53, 48, 0.35);
+  pointer-events: none;
+  height: 0;
 }
