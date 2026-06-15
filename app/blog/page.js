@@ -16,7 +16,7 @@ export default async function BlogIndexPage() {
   const supabase = createPublicClient();
   const { data: posts } = await supabase
     .from("posts")
-    .select("id, title, slug, excerpt, featured_image, categories, reading_time, published_at")
+    .select("id, title, slug, excerpt, featured_image, categories, reading_time, published_at, views, profiles(full_name)")
     .eq("status", "published")
     .order("published_at", { ascending: false });
 
@@ -69,7 +69,11 @@ export default async function BlogIndexPage() {
                     {post.excerpt}
                   </p>
                   <div className="mt-5 text-xs text-ink/45">
-                    {formatDate(post.published_at)} · {post.reading_time} min read
+                    <span className="font-medium text-ink/70">
+                      {post.profiles?.full_name || "NourishDesk"}
+                    </span>
+                    <br />
+                    {formatDate(post.published_at)} · {post.reading_time} min read · {(post.views ?? 0).toLocaleString("en-IN")} views
                   </div>
                 </div>
               </Link>

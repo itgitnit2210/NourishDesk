@@ -35,6 +35,12 @@ export default function Article({ post, authorName }) {
         </time>
         <span aria-hidden>·</span>
         <span>{post.reading_time} min read</span>
+        {post.views != null && (
+          <>
+            <span aria-hidden>·</span>
+            <span>{post.views.toLocaleString("en-IN")} views</span>
+          </>
+        )}
         {edited && (
           <>
             <span aria-hidden>·</span>

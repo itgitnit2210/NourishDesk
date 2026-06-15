@@ -3,6 +3,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Article from "@/components/blog/Article";
+import ViewCounter from "@/components/blog/ViewCounter";
 import { createPublicClient } from "@/lib/supabase/public";
 import { ArrowLeft } from "lucide-react";
 
@@ -83,6 +84,7 @@ export default async function BlogPostPage({ params }) {
           <ArrowLeft size={16} /> All posts
         </Link>
         <Article post={post} authorName={authorName} />
+        <ViewCounter slug={post.slug} />
       </main>
       <Footer />
     </>
