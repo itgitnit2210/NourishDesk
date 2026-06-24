@@ -2,7 +2,7 @@ import { formatDate } from "@/lib/blog";
 
 // Renders a full blog article. `post.content` must already be sanitized HTML.
 // Used by the public /blog/[slug] page AND the editor's live preview.
-// The `select-none` + touch-callout classes make the text non-selectable.
+// `select-none` + touch-callout make the text non-selectable.
 export default function Article({ post, authorName }) {
   const edited =
     post.updated_at &&
@@ -79,6 +79,12 @@ export default function Article({ post, authorName }) {
           ))}
         </div>
       )}
+
+      {/* Copyright notice */}
+      <p className="mt-10 text-xs leading-relaxed text-ink/40">
+        © {new Date().getFullYear()} NourishDesk · All rights reserved. Please do
+        not reproduce without permission.
+      </p>
     </article>
   );
 }
