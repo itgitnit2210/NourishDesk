@@ -2,6 +2,7 @@ import { formatDate } from "@/lib/blog";
 
 // Renders a full blog article. `post.content` must already be sanitized HTML.
 // Used by the public /blog/[slug] page AND the editor's live preview.
+// The `select-none` + touch-callout classes make the text non-selectable.
 export default function Article({ post, authorName }) {
   const edited =
     post.updated_at &&
@@ -10,7 +11,7 @@ export default function Article({ post, authorName }) {
       60 * 1000;
 
   return (
-    <article className="mx-auto w-full max-w-3xl">
+    <article className="mx-auto w-full max-w-3xl select-none [-webkit-touch-callout:none]">
       {/* Categories */}
       {post.categories?.length > 0 && (
         <div className="mb-4 flex flex-wrap gap-2">
