@@ -86,7 +86,11 @@ export default async function BlogPostPage({ params }) {
           <ArrowLeft size={16} /> All posts
         </Link>
         <Article post={post} authorName={authorName} />
-        <LikeDislike slug={post.slug} />
+        <LikeDislike
+          slug={post.slug}
+          initialLikes={post.likes}
+          initialDislikes={post.dislikes}
+        />
         <ViewCounter slug={post.slug} />
         <ContentProtection />
       </main>
