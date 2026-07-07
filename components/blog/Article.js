@@ -1,8 +1,8 @@
 import { formatDate } from "@/lib/blog";
+import { Link as LinkIcon } from "lucide-react";
 
 // Renders a full blog article. `post.content` must already be sanitized HTML.
 // Used by the public /blog/[slug] page AND the editor's live preview.
-// `select-none` + touch-callout make the text non-selectable.
 export default function Article({ post, authorName }) {
   const edited =
     post.updated_at &&
@@ -65,6 +65,52 @@ export default function Article({ post, authorName }) {
         className="prose prose-lg mt-10 max-w-none prose-headings:font-serif prose-headings:text-ink prose-a:text-brand-700 prose-blockquote:border-brand-300 prose-img:rounded-2xl"
         dangerouslySetInnerHTML={{ __html: post.content || "<p></p>" }}
       />
+
+      {/* Inspired by / references */}
+      {post.inspired_by?.length > 0 && (
+        <div className="mt-12 border-t border-brand-100 pt-8">
+          <h2 className="heading-serif text-xl">Inspired by</h2>
+          <p className="mt-1 text-sm text-ink/50">
+            Sources and reads that shaped this post.
+          </p>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+            {post.inspired_by.map((entry, i) => {
+              // Each entry can be "Title | https://url" or just a URL.
+              const parts = entry.includes("|") ? entry.split("|") : [null, entry];
+              const rawTitle = parts[0];
+              let href = (parts[1] || "").trim();
+              if (href && !/^https?:\/\//i.test(href)) href = "https://" + href;
+              let host = href;
+              try {
+                host = new URL(href).hostname.replace(/^www\./, "");
+              } catch {
+                /* leave host as-is if URL is malformed */
+              }
+              const label = rawTitle ? rawTitle.trim() : host;
+              return (
+                <li key={i}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="flex items-center gap-3 rounded-2xl border border-brand-100 bg-white px-4 py-3 transition-colors hover:border-brand-300 hover:bg-brand-50"
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700">
+                      <LinkIcon size={16} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-medium text-ink">
+                        {label}
+                      </span>
+                      <span className="block truncate text-xs text-ink/45">{host}</span>
+                    </span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
 
       {/* Tags */}
       {post.tags?.length > 0 && (

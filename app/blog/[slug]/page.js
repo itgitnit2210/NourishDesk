@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import Article from "@/components/blog/Article";
 import ViewCounter from "@/components/blog/ViewCounter";
 import ContentProtection from "@/components/blog/ContentProtection";
+import LikeDislike from "@/components/blog/LikeDislike";
 import { createPublicClient } from "@/lib/supabase/public";
 import { ArrowLeft } from "lucide-react";
 
@@ -85,6 +86,7 @@ export default async function BlogPostPage({ params }) {
           <ArrowLeft size={16} /> All posts
         </Link>
         <Article post={post} authorName={authorName} />
+        <LikeDislike slug={post.slug} />
         <ViewCounter slug={post.slug} />
         <ContentProtection />
       </main>

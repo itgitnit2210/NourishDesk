@@ -6,8 +6,6 @@ import { slugify, readingTime, buildExcerpt, cleanHtml } from "@/lib/blog";
 async function uniqueSlug(supabase, base, excludeId = null) {
   let slug = base || "post";
   let n = 1;
-  // Loop until we find a free slug.
-  // (Cheap: indexed unique lookup, runs a handful of times at most.)
   // eslint-disable-next-line no-constant-condition
   while (true) {
     let query = supabase.from("posts").select("id").eq("slug", slug).limit(1);
@@ -62,6 +60,7 @@ export async function POST(request) {
       featured_image: body.featured_image || null,
       tags: body.tags || [],
       categories: body.categories || [],
+      inspired_by: body.inspired_by || [],
       meta_title: body.meta_title || null,
       meta_description: body.meta_description || null,
       reading_time: readingTime(content),

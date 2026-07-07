@@ -11,6 +11,9 @@ import { Eye, Pencil, Loader2, CheckCircle2, UploadCloud } from "lucide-react";
 const toArray = (s) =>
   s.split(",").map((x) => x.trim()).filter(Boolean);
 
+const toLines = (s) =>
+  s.split("\n").map((x) => x.trim()).filter(Boolean);
+
 export default function PostForm({ initialPost = null, authorName }) {
   const router = useRouter();
   const supabase = createClient();
@@ -23,6 +26,7 @@ export default function PostForm({ initialPost = null, authorName }) {
     featured_image: initialPost?.featured_image || "",
     tags: (initialPost?.tags || []).join(", "),
     categories: (initialPost?.categories || []).join(", "),
+    inspired_by: (initialPost?.inspired_by || []).join("\n"),
     meta_title: initialPost?.meta_title || "",
     meta_description: initialPost?.meta_description || "",
     status: initialPost?.status || "draft",
@@ -49,6 +53,7 @@ export default function PostForm({ initialPost = null, authorName }) {
         ...post,
         tags: toArray(post.tags),
         categories: toArray(post.categories),
+        inspired_by: toLines(post.inspired_by),
         ...overrides,
       };
       setSaveState("saving");
@@ -128,6 +133,7 @@ export default function PostForm({ initialPost = null, authorName }) {
     ...post,
     tags: toArray(post.tags),
     categories: toArray(post.categories),
+    inspired_by: toLines(post.inspired_by),
     reading_time: readingTime(post.content),
     published_at: initialPost?.published_at || new Date().toISOString(),
     updated_at: initialPost?.updated_at,
@@ -230,6 +236,12 @@ export default function PostForm({ initialPost = null, authorName }) {
         <Field label="Tags (comma separated)">
           <input value={post.tags} onChange={(e) => set("tags", e.target.value)}
             className="input" placeholder="sugar, cravings, office" />
+        </Field>
+
+        <Field label="Inspired by (one link per line)">
+          <textarea value={post.inspired_by} onChange={(e) => set("inspired_by", e.target.value)}
+            rows={3} className="input resize-none"
+            placeholder={"https://example.com/article\nTitle | https://another.com"} />
         </Field>
 
         <Field label="Meta title (SEO)">

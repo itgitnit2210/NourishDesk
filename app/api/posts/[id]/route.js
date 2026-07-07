@@ -54,6 +54,7 @@ export async function PATCH(request, { params }) {
   if (body.featured_image !== undefined) updates.featured_image = body.featured_image;
   if (body.tags !== undefined) updates.tags = body.tags;
   if (body.categories !== undefined) updates.categories = body.categories;
+  if (body.inspired_by !== undefined) updates.inspired_by = body.inspired_by;
   if (body.meta_title !== undefined) updates.meta_title = body.meta_title;
   if (body.meta_description !== undefined) updates.meta_description = body.meta_description;
 
