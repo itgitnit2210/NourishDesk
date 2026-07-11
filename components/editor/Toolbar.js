@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough,
   Heading1, Heading2, Heading3, List, ListOrdered,
@@ -11,7 +12,7 @@ function Btn({ onClick, active, disabled, title, children }) {
   return (
     <button
       type="button"
-      onMouseDown={(e) => e.preventDefault()} // keep editor focus
+      onMouseDown={(e) => e.preventDefault()} // keep editor focus + selection
       onClick={onClick}
       disabled={disabled}
       title={title}
@@ -33,7 +34,29 @@ const selectClass =
   "h-9 rounded-lg border border-brand-100 bg-white px-2 text-sm text-ink/70 outline-none focus:border-brand-300";
 
 export default function Toolbar({ editor, onImageUpload }) {
+  // Remembers the text selection before a native <select>/color input steals it.
+  const savedSel = useRef(null);
+
   if (!editor) return null;
+
+  const rememberSelection = () => {
+    const { from, to } = editor.state.selection;
+    savedSel.current = { from, to };
+  };
+
+  // Focused chain with the intended selection restored. If nothing was
+  // selected, expand to the whole paragraph so styling has a visible effect.
+  const styledChain = () => {
+    const sel = savedSel.current || editor.state.selection;
+    let { from, to } = sel;
+    if (from === to) {
+      const $from = editor.state.doc.resolve(from);
+      from = $from.start();
+      to = $from.end();
+    }
+    savedSel.current = null;
+    return editor.chain().focus().setTextSelection({ from, to });
+  };
 
   const addLink = () => {
     const prev = editor.getAttributes("link").href;
@@ -69,10 +92,12 @@ export default function Toolbar({ editor, onImageUpload }) {
       <select
         className={selectClass}
         value={fontFamily}
+        onMouseDown={rememberSelection}
         onChange={(e) => {
           const v = e.target.value;
-          if (v) editor.chain().focus().setFontFamily(v).run();
-          else editor.chain().focus().unsetFontFamily().run();
+          const c = styledChain();
+          if (v) c.setFontFamily(v).run();
+          else c.unsetFontFamily().run();
         }}
         title="Font family"
       >
@@ -86,10 +111,12 @@ export default function Toolbar({ editor, onImageUpload }) {
       <select
         className={selectClass}
         value={fontSize}
+        onMouseDown={rememberSelection}
         onChange={(e) => {
           const v = e.target.value;
-          if (v) editor.chain().focus().setFontSize(v).run();
-          else editor.chain().focus().unsetFontSize().run();
+          const c = styledChain();
+          if (v) c.setFontSize(v).run();
+          else c.unsetFontSize().run();
         }}
         title="Font size"
       >
@@ -142,6 +169,7 @@ export default function Toolbar({ editor, onImageUpload }) {
       <label
         title="Text color"
         className="relative flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg hover:bg-brand-50"
+        onMouseDown={rememberSelection}
       >
         <span className="text-sm font-semibold leading-none" style={{ color }}>
           A
@@ -149,7 +177,7 @@ export default function Toolbar({ editor, onImageUpload }) {
         <input
           type="color"
           value={color}
-          onInput={(e) => editor.chain().focus().setColor(e.target.value).run()}
+          onInput={(e) => styledChain().setColor(e.target.value).run()}
           className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
         />
       </label>
