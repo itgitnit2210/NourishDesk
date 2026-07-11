@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useReducer, useEffect } from "react";
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough,
   Heading1, Heading2, Heading3, List, ListOrdered,
@@ -36,6 +36,20 @@ const selectClass =
 export default function Toolbar({ editor, onImageUpload }) {
   // Remembers the text selection before a native <select>/color input steals it.
   const savedSel = useRef(null);
+
+  // Force the toolbar to re-render whenever the editor state or selection
+  // changes, so the Font/Size dropdowns and active states always reflect
+  // what's under the cursor.
+  const [, forceRender] = useReducer((n) => n + 1, 0);
+  useEffect(() => {
+    if (!editor) return;
+    editor.on("transaction", forceRender);
+    editor.on("selectionUpdate", forceRender);
+    return () => {
+      editor.off("transaction", forceRender);
+      editor.off("selectionUpdate", forceRender);
+    };
+  }, [editor]);
 
   if (!editor) return null;
 
