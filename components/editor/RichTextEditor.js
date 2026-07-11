@@ -1,59 +1,29 @@
 "use client";
 
 import { useEditor, EditorContent } from "@tiptap/react";
-import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
-import TextStyle from "@tiptap/extension-text-style";
-import FontFamily from "@tiptap/extension-font-family";
-import Color from "@tiptap/extension-color";
+// Tiptap v3: TextStyle + Color + FontFamily + FontSize all come from this ONE
+// package as NAMED imports (the old @tiptap/extension-color and
+// @tiptap/extension-font-family packages were merged into it).
+import {
+  TextStyle,
+  Color,
+  FontFamily,
+  FontSize,
+} from "@tiptap/extension-text-style";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
 import { useEffect } from "react";
 import Toolbar from "./Toolbar";
 
-// Tiptap has no official font-size extension, so this small one stores a
-// font-size on the textStyle mark. Enables setFontSize / unsetFontSize commands.
-const FontSize = Extension.create({
-  name: "fontSize",
-  addOptions() {
-    return { types: ["textStyle"] };
-  },
-  addGlobalAttributes() {
-    return [
-      {
-        types: this.options.types,
-        attributes: {
-          fontSize: {
-            default: null,
-            parseHTML: (element) => element.style.fontSize || null,
-            renderHTML: (attributes) =>
-              attributes.fontSize ? { style: `font-size: ${attributes.fontSize}` } : {},
-          },
-        },
-      },
-    ];
-  },
-  addCommands() {
-    return {
-      setFontSize:
-        (size) =>
-        ({ chain }) =>
-          chain().setMark("textStyle", { fontSize: size }).run(),
-      unsetFontSize:
-        () =>
-        ({ chain }) =>
-          chain().setMark("textStyle", { fontSize: null }).removeEmptyTextStyle().run(),
-    };
-  },
-});
-
 export default function RichTextEditor({ value, onChange, onImageUpload }) {
   const editor = useEditor({
     immediatelyRender: false, // avoids SSR hydration mismatch
+    shouldRerenderOnTransaction: true, // v3: keep the toolbar in sync with state
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
@@ -62,10 +32,10 @@ export default function RichTextEditor({ value, onChange, onImageUpload }) {
       Link.configure({ openOnClick: false, autolink: true }),
       Image.configure({ inline: false, allowBase64: false }),
       Placeholder.configure({ placeholder: "Start writing your story…" }),
-      TextStyle,
+      TextStyle, // base mark the three below attach to
+      Color,
       FontFamily,
       FontSize,
-      Color,
       Highlight,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
@@ -87,8 +57,7 @@ export default function RichTextEditor({ value, onChange, onImageUpload }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, value]);
 
-  // NOTE: no "overflow-hidden" here — that would break the toolbar's
-  // sticky positioning. Rounded corners still work via the border radius.
+  // No "overflow-hidden" here — that would break the toolbar's sticky position.
   return (
     <div className="rounded-2xl border border-brand-100 bg-white shadow-card">
       <Toolbar editor={editor} onImageUpload={onImageUpload} />
